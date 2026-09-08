@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Sửa lỗi UnknownHostException bằng cách chuyển từ http:// sang lb://
+        - id: product-service-route
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+
+        # Bổ sung route mới cho voucher-service thông qua Cân bằng tải Eureka
+        - id: voucher-service-route
+          uri: lb://voucher-service
+          predicates:
+            - Path=/api/vouchers/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
